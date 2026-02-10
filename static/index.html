@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Memory System | AI-Driven Memory Management</title>
+    <meta name="description" content="AI-Driven Memory Management System for LLMs using SQL and NoSQL databases">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css?v=2">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">Memory<span class="highlight">LLM</span></span>
+                </div>
+            </div>
+
+            <div class="user-section">
+                <h3>Users</h3>
+                <div class="sidebar-input-group">
+                    <input type="text" id="newUsername" placeholder="Enter username..." class="text-input">
+                    <button id="createUserBtn" class="btn btn-primary">+ Add</button>
+                </div>
+                <ul id="userList" class="user-list">
+                    <!-- Users populated dynamically -->
+                </ul>
+            </div>
+
+            <div class="stats-section">
+                <h3>System Stats</h3>
+                <div class="stat-card">
+                    <span class="stat-label">SQLite</span>
+                    <span class="stat-value status-connected" id="sqliteStatus">Connected</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">MongoDB</span>
+                    <span class="stat-value" id="mongoStatus">Checking...</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Active User</span>
+                    <span class="stat-value" id="activeUser">None</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-content">
+                    <div>
+                        <h1>Memory Management Dashboard</h1>
+                        <p class="subtitle">AI-Driven persistent memory for LLM applications</p>
+                    </div>
+                    <button id="settingsBtn" class="btn btn-icon settings-btn" title="Settings">⚙️</button>
+                </div>
+            </header>
+
+            <!-- Chat Section -->
+            <section class="chat-section">
+                <div class="section-header">
+                    <h2>💬 Conversation</h2>
+                    <span class="session-info" id="sessionInfo">No active session</span>
+                </div>
+
+                <div class="chat-container" id="chatContainer">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">👋</div>
+                        <h3>Welcome to Memory LLM</h3>
+                        <p>Select or create a user to start a conversation. Messages will be automatically analyzed for
+                            entities, preferences, and facts.</p>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <textarea id="messageInput" placeholder="Type your message... (Press Enter to send)"
+                        class="message-input" rows="2" disabled></textarea>
+                    <select id="chatModelSelect" class="model-select-inline" disabled>
+                        <option value="gemini-2.0-flash">Loading models...</option>
+                    </select>
+                    <button id="sendBtn" class="btn btn-send" disabled>
+                        <span>Send</span>
+                        <span class="send-icon">→</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Memory Panel -->
+        <aside class="memory-panel">
+            <div class="panel-header">
+                <h2>🔮 Memory Insights</h2>
+            </div>
+
+            <div class="memory-tabs">
+                <button class="tab-btn active" data-tab="memories">Memories</button>
+                <button class="tab-btn" data-tab="entities">Entities</button>
+                <button class="tab-btn" data-tab="relations">Relations</button>
+                <button class="tab-btn" data-tab="nosql">NoSQL</button>
+            </div>
+
+            <div class="tab-content active" id="memories-tab">
+                <div class="memory-filters">
+                    <select id="memoryTypeFilter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="fact">Facts</option>
+                        <option value="preference">Preferences</option>
+                        <option value="skill">Skills</option>
+                        <option value="rule">Rules</option>
+                    </select>
+                </div>
+                <div class="memory-list" id="memoryList">
+                    <div class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <p>No memories yet. Start a conversation!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="entities-tab">
+                <div class="entity-list" id="entityList">
+                    <div class="empty-state">
+                        <span class="empty-icon">🏷️</span>
+                        <p>Entities will appear here as you chat.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="relations-tab">
+                <div class="relation-list" id="relationList">
+                    <div class="empty-state">
+                        <span class="empty-icon">🔗</span>
+                        <p>Entity relationships will appear here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="nosql-tab">
+                <div class="nosql-header">
+                    <h4>📦 MongoDB Documents</h4>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button id="refreshNoSQLBtn" class="btn btn-icon" title="Refresh NoSQL Data"
+                            style="padding: 2px 6px; font-size: 14px;">🔄</button>
+                        <span class="nosql-status" id="nosqlStatusBadge">Checking...</span>
+                    </div>
+                </div>
+                <div class="nosql-list" id="nosqlList">
+                    <div class="empty-state">
+                        <span class="empty-icon">🗄️</span>
+                        <p>NLP processing logs from MongoDB will appear here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="memory-search">
+                <input type="text" id="memorySearch" placeholder="Search memories..." class="search-input">
+                <button id="searchMemoryBtn" class="btn btn-icon">🔍</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>⚙️ Settings</h2>
+                <button id="closeSettingsBtn" class="btn btn-icon close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="modelSelect">LLM Provider</label>
+                    <select id="modelSelect" class="filter-select">
+                        <option value="gemini">Gemini (Google)</option>
+                        <option value="openai">OpenAI (GPT)</option>
+                        <option value="openrouter">OpenRouter</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>API Keys</label>
+                    <div id="apiKeyList" class="api-key-list">
+                        <!-- Keys populated dynamically -->
+                        <div class="empty-keys-state">No keys added</div>
+                    </div>
+
+                    <div class="add-key-form">
+                        <input type="text" id="newKeyLabelInput" class="text-input" style="flex: 1; margin-right: 8px;"
+                            placeholder="Label (Optional)">
+                        <input type="password" id="newApiKeyInput" class="text-input" style="flex: 2;"
+                            placeholder="Paste new API key here...">
+                        <button id="addKeyBtn" class="btn btn-primary" type="button">Add</button>
+                    </div>
+                    <small class="form-hint">Keys are rotated automatically on rate limits. Add multiple keys for better
+                        reliability.</small>
+                </div>
+                <div class="current-status">
+                    <span class="status-label">Current Model:</span>
+                    <span id="currentModelStatus" class="status-value">Gemini</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelSettingsBtn" class="btn btn-secondary">Cancel</button>
+                <button id="saveSettingsBtn" class="btn btn-primary">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
